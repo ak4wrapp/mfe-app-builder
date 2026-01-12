@@ -234,15 +234,6 @@ cat <<EOF > apps/mfe-apps/$NAME/vite-env.d.ts
 /// <reference types="vite/client" />
 EOF
 
-  # ----------------------------
-  # vercel.json
-  # ----------------------------
-cat <<EOF > apps/mfe-apps/$NAME/vercel.json
-{
-  "rewrites": [{ "source": "/$NAME/(.*)", "destination": "/\$1" }]
-}
-EOF
-
 }
 
 create_mfe mfe1 5001
@@ -613,19 +604,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
 EOF
 
 # ---------------------------------------------------
-# 9. Vercel Configuration (POC)
-# ---------------------------------------------------
-# This routes domain.com/mfe1 to the correct index.html for SPA support
-cat <<EOF > apps/shell/vercel.json
-{
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
-EOF
-
-# ---------------------------------------------------
-# 10. Docker & Nginx (AWS / Bamboo / JFrog)
+# 9. Docker & Nginx (AWS / Bamboo / JFrog)
 # ---------------------------------------------------
 
 # Create a separate folder for deployment artifacts
@@ -681,19 +660,24 @@ CMD ["nginx", "-g", "daemon off;"]
 EOF
 
 # ---------------------------------------------------
-# 11. Install dependencies
+# 10. Install dependencies
 # ---------------------------------------------------
 
 pnpm install
-echo "✅ Hardened Setup Complete!"
-echo "==========================="
-echo "🐳 For AWS: Run 'docker build -t mfe-app .'"
-echo "☁️ For Vercel: Run ./setup-verson.sh $APP_NAME"
 
-# ---------------------------------------------------
-# 12. Completion
-# ---------------------------------------------------
+cat <<EOF
 
-echo "\n🚀 To start your app preview, run:"
-echo "cd $APP_NAME && pnpm run local:preview"
+✅  Hardened Setup Complete!
+───────────────────────────
+
+🐳  AWS Deployment:
+   Run: docker build -t mfe-app .
+
+☁️  Vercel Deployment:
+   Run: ./setup-vercel.sh $APP_NAME
+
+🚀  Start Local Preview:
+   cd $APP_NAME && pnpm run local:preview
+
+EOF
 

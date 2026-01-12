@@ -25,7 +25,8 @@ versel_for_mfe () {
 
 cat <<EOF > apps/mfe-apps/$NAME/vercel.json
 {
-"rewrites": [{ "source": "/$NAME/(.*)", "destination": "/index.html"}]}
+  "rewrites": [{ "source": "/$NAME/(.*)", "destination": "/\$1" }]
+}
 EOF
 }
 
