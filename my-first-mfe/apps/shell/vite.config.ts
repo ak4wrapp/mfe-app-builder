@@ -5,7 +5,9 @@ import federation from "@originjs/vite-plugin-federation";
 export default defineConfig(({ mode }) => {
   console.log("Vite mode:", mode);
   const env = loadEnv(mode, process.cwd(), "");
-  console.log("Loaded env variables:", env);
+  console.log("Loaded env variables:");
+  console.log(`VITE_MFE1_URL: ${env.VITE_MFE1_URL || "Not found"}`);
+  console.log(`VITE_MFE2_URL: ${env.VITE_MFE2_URL || "Not found"}`);
 
   return {
     plugins: [
