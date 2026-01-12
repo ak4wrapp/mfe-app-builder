@@ -2,7 +2,20 @@
 set -e
 
 APP_NAME="${1:-my-mfe-app}"
-echo "🚀 Settin up vercel for $APP_NAME..."
+
+if [[ ! -d "$APP_NAME" ]]; then
+  echo ""
+  echo "❌ Setup not found for '$APP_NAME'"
+  echo "ℹ️  Please run the setup first:"
+  echo "   ./setup.sh $APP_NAME"
+  echo ""
+  exit 1
+fi
+
+echo ""
+echo "✅ Found setup for '$APP_NAME'"
+echo "🚀 Setting up Vercel..."
+echo ""
 
 cd $APP_NAME
 # ---------------------------------------------------
