@@ -74,26 +74,55 @@ cat <<EOF > packages/ui/package.json
 {
   "name": "@repo/ui",
   "private": true,
-  "main": "./src/index.tsx",
-  "types": "./src/index.tsx",
-  "peerDependencies": { "react": "^18.2.0" }
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.4"
+  }
 }
 EOF
 
-cat <<EOF > packages/ui/src/index.tsx
-import React from 'react';
+cat <<EOF > packages/ui/src/components/SharedButton/index.tsx
+import React from "react";
 export const SharedButton = ({ text }: { text: string }) => (
-  <button style={{
-    padding: '10px 20px',
-    background: '#0070f3',
-    color: 'white',
-    border: 'none',
-    borderRadius: 6,
-    cursor: 'pointer'
-  }}>
+  <button
+    style={{
+      padding: "10px 20px",
+      background: "#0070f3",
+      color: "white",
+      border: "none",
+      borderRadius: 6,
+      cursor: "pointer",
+    }}
+  >
     {text}
   </button>
-)
+);
+EOF
+
+
+cat <<EOF > packages/ui/src/components/index.ts
+export { SharedButton } from "./SharedButton"; // <- named export
+EOF
+
+cat <<EOF > packages/ui/src/index.ts
+export * from "./components";
 EOF
 
 # ---------------------------------------------------
