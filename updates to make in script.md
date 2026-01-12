@@ -9,3 +9,4 @@ vercel.json
 
 2. create shell/microfrontends.json
 3. update shell.version.json
+4. shell/src/remote/ts and update vite
