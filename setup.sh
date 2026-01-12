@@ -287,8 +287,8 @@ EOF
 
 # Production URLs (subfolder)
 cat <<EOF > apps/shell/.env.production
-VITE_MFE1_URL=/mfe1/assets/remoteEntry.js
-VITE_MFE2_URL=/mfe2/assets/remoteEntry.js
+VITE_MFE1_URL=https://my-first-mfe-app-mfe1.vercel.app/assets/remoteEntry.js
+VITE_MFE2_URL=https://my-first-mfe-app-mfe2.vercel.app/assets/remoteEntry.js
 EOF
 
 cat <<EOF > apps/shell/vite.config.ts
