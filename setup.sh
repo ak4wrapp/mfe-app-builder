@@ -480,7 +480,7 @@ EOF
 # 9. Vercel Configuration (POC)
 # ---------------------------------------------------
 # This routes domain.com/mfe1 to the correct index.html for SPA support
-cat <<EOF > vercel.json
+cat <<EOF > apps/shell/vercel.json
 {
   "rewrites": [
     { "source": "/mfe1/:path*", "destination": "/apps/mfe-apps/mfe1/dist/:path*" },
