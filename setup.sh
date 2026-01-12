@@ -98,6 +98,9 @@ cat <<EOF > packages/ui/package.json
 }
 EOF
 
+mkdir -p apps/mfe-apps/{mfe1,mfe2}/src apps/shell/src packages/ui/src/components
+mkdir -p apps/mfe-apps/{mfe1,mfe2}/src apps/shell/src packages/ui/src/components/SharedButton
+
 cat <<EOF > packages/ui/src/components/SharedButton/index.tsx
 import React from "react";
 export const SharedButton = ({ text }: { text: string }) => (
@@ -231,6 +234,15 @@ cat <<EOF > apps/mfe-apps/$NAME/vite-env.d.ts
 /// <reference types="vite/client" />
 EOF
 
+  # ----------------------------
+  # vercel.json
+  # ----------------------------
+cat <<EOF > apps/mfe-apps/$NAME/vercel.json
+{
+  "rewrites": [{ "source": "/$NAME/(.*)", "destination": "/\$1" }]
+}
+EOF
+
 }
 
 create_mfe mfe1 5001
@@ -280,70 +292,124 @@ VITE_MFE2_URL=http://localhost:5002/mfe2/assets/remoteEntry.js
 EOF
 
 # Development URLs (subfolder)
-cat <<EOF > apps/shell/.env.production
-VITE_MFE1_URL=http://dev.com/mfe1/assets/remoteEntry.js
-VITE_MFE2_URL=http://dev.com/mfe1/assets/remoteEntry.js
+cat <<EOF > apps/shell/.env.development
+VITE_MFE1_URL=http://REPLACE_WITH_MFE1_APP_DEV_URL/mfe1/assets/remoteEntry.js
+VITE_MFE2_URL=http://REPLACE_WITH_MFE1_APP_DEV_URL/mfe1/assets/remoteEntry.js
 EOF
 
 # Production URLs (subfolder)
 cat <<EOF > apps/shell/.env.production
-VITE_MFE1_URL=https://my-first-mfe-app-mfe1.vercel.app/assets/remoteEntry.js
-VITE_MFE2_URL=https://my-first-mfe-app-mfe2.vercel.app/assets/remoteEntry.js
+VITE_MFE1_URL=https://REPLACE_WITH_MFE1_APP_PROD_URL/assets/remoteEntry.js
+VITE_MFE2_URL=https://REPLACE_WITH_MFE2_APP_PROD_URL/assets/remoteEntry.js
 EOF
 
 cat <<EOF > apps/shell/vite.config.ts
-import { defineConfig, loadEnv } from 'vite'
-import react from '@vitejs/plugin-react'
-import federation from '@originjs/vite-plugin-federation'
+import { defineConfig, loadEnv } from "vite";
+import react from "@vitejs/plugin-react";
+import federation from "@originjs/vite-plugin-federation";
+import getRemotes from "./src/remotes";
 
+// export default defineConfig(({ command, mode }) => {
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
+  // console.log("Vite command:", command);
+  console.log("Vite mode:", mode);
+
+  // Load environment variables based on the current mode
+  const env = loadEnv(mode, process.cwd(), "");
+  // console.log("Loaded env variables:", env);
+
   return {
+    build: {
+      minify: false,
+      sourcemap: true,
+    },
+    preview: {
+      port: 5173,
+      strictPort: true,
+    },
     plugins: [
       react(),
       federation({
-        name: 'shell',
-        remotes: {
-          mfe1: \`\${env.VITE_MFE1_URL}\`,
-          mfe2: \`\${env.VITE_MFE2_URL}\`
-        },
-        shared: ['react', 'react-dom']
-      })
-    ]
-  }
-})
+        name: "shell",
+        remotes: getRemotes(env),
+        shared: ["react", "react-dom"],
+      }),
+    ],
+  };
+});
 
 EOF
 
 cat <<EOF > apps/shell/src/App.tsx
-import React, { Suspense, lazy } from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
-import { SharedButton } from '@repo/ui'
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { SharedButton } from "@repo/ui";
 
-// @ts-ignore
-const Mfe1 = lazy(() => import('mfe1/App'))
-// @ts-ignore
-const Mfe2 = lazy(() => import('mfe2/App'))
+const Mfe1 = lazy(() => import("mfe1/App"));
+const Mfe2 = lazy(() => import("mfe2/App"));
 
 export default () => (
   <BrowserRouter>
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h1>Host Shell</h1>
-      <nav style={{ display: 'flex', gap: 15, marginBottom: '30px', background: '#f4f4f4', padding: '15px', borderRadius: '8px' }}>
-        <Link to="/" style={{ textDecoration: 'none' }}><SharedButton text="Home" /></Link>
-        <Link to="/mfe1" style={{ textDecoration: 'none' }}><SharedButton text="MFE 1" /></Link>
-        <Link to="/mfe2" style={{ textDecoration: 'none' }}><SharedButton text="MFE 2" /></Link>
+      <nav
+        style={{
+          display: "flex",
+          gap: 15,
+          marginBottom: "30px",
+          background: "#f4f4f4",
+          padding: "15px",
+          borderRadius: "8px",
+        }}
+      >
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <SharedButton text="Home" />
+        </Link>
+        <Link to="/mfe1" style={{ textDecoration: "none" }}>
+          <SharedButton text="MFE 1" />
+        </Link>
+        <Link to="/mfe2" style={{ textDecoration: "none" }}>
+          <SharedButton text="MFE 2" />
+        </Link>
       </nav>
-      <div style={{ border: '2px solid #0070f3', padding: '20px', borderRadius: '10px' }}>
+      <div
+        style={{
+          border: "2px solid #0070f3",
+          padding: "20px",
+          borderRadius: "10px",
+        }}
+      >
         <Routes>
-          <Route path="/" element={<div><h2>Welcome to the Shell</h2><p>Select an MFE above to load it at runtime.</p></div>} />
-          <Route path="/mfe1" element={<Suspense fallback="Loading MFE1..."><Mfe1 /></Suspense>} />
-          <Route path="/mfe2" element={<Suspense fallback="Loading MFE2..."><Mfe2 /></Suspense>} />
+          <Route
+            path="/"
+            element={
+              <div>
+                <h2>Welcome to the Shell</h2>
+                <p>Select an MFE above to load it at runtime.</p>
+              </div>
+            }
+          />
+          <Route
+            path="/mfe1"
+            element={
+              <Suspense fallback="Loading MFE1...">
+                <Mfe1 />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/mfe2"
+            element={
+              <Suspense fallback="Loading MFE2...">
+                <Mfe2 />
+              </Suspense>
+            }
+          />
         </Routes>
       </div>
     </div>
   </BrowserRouter>
-)
+);
 EOF
 
 cat <<EOF > apps/shell/src/vite-env.d.ts
@@ -353,16 +419,31 @@ EOF
 cat <<EOF > apps/shell/src/mfe.d.ts
 declare module "mfe1/App" {
   import { ComponentType } from "react";
-  const mfe1: ComponentType;
-  export default mfe1;
+  const mfe1_App: ComponentType;
+  export default mfe1_App;
 }
 
 declare module "mfe2/App" {
   import { ComponentType } from "react";
-  const mfe2: ComponentType;
-  export default mfe2;
+  const mfe2_App: ComponentType;
+  export default mfe2_App;
 }
 EOF
+
+cat <<EOF > apps/shell/src/remotes.ts
+export default function getRemotes(env: Record<string, string>) {
+  const mfe1: string = env.VITE_MFE1_URL;
+  const mfe2: string = env.VITE_MFE2_URL;
+
+  console.log("Configured Remotes - mfe1:", mfe1);
+  console.log("Configured Remotes - mfe2:", mfe2);
+  return {
+    mfe1: mfe1,
+    mfe2: mfe2,
+  };
+}
+EOF
+
 # ---------------------------------------------------
 # 5. .gitignore
 # ---------------------------------------------------
@@ -524,11 +605,11 @@ cat <<EOF > apps/shell/index.html
 EOF
 
 cat <<EOF > apps/shell/src/main.tsx
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<App />)
+ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
 EOF
 
 # ---------------------------------------------------
@@ -538,12 +619,7 @@ EOF
 cat <<EOF > apps/shell/vercel.json
 {
   "rewrites": [
-    { "source": "/mfe1/:path*", "destination": "/apps/mfe-apps/mfe1/dist/:path*" },
-    { "source": "/mfe2/:path*", "destination": "/apps/mfe-apps/mfe2/dist/:path*" },
-    { "source": "/mfe1", "destination": "/apps/mfe-apps/mfe1/dist/index.html" },
-    { "source": "/mfe2", "destination": "/apps/mfe-apps/mfe2/dist/index.html" },
-    { "source": "/(.*)", "destination": "/apps/shell/dist/\$1" },
-    { "source": "/", "destination": "/apps/shell/dist/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
 EOF
@@ -605,19 +681,19 @@ CMD ["nginx", "-g", "daemon off;"]
 EOF
 
 # ---------------------------------------------------
-# 11. Completion
+# 11. Install dependencies
 # ---------------------------------------------------
 
 pnpm install
 echo "✅ Hardened Setup Complete!"
+echo "==========================="
 echo "🐳 For AWS: Run 'docker build -t mfe-app .'"
-echo "☁️ For Vercel: Just push to GitHub; vercel.json will handle the rest."
+echo "☁️ For Vercel: Run ./setup-verson.sh $APP_NAME"
 
 # ---------------------------------------------------
-# 12. Install dependencies
+# 12. Completion
 # ---------------------------------------------------
 
-echo "✅ Setup complete!"
-echo "🚀 To start your app preview, run:"
+echo "\n🚀 To start your app preview, run:"
 echo "cd $APP_NAME && pnpm run local:preview"
 

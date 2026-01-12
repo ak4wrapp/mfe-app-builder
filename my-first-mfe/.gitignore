@@ -17,8 +17,7 @@ Thumbs.db
 *.njsproj
 *.sln
 
-
-# turbo temp files
+# Turbo cache
 .turbo/
 
 # Log files

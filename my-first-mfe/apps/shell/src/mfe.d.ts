@@ -1,4 +1,3 @@
-// my-first-mfe/apps/shell/src/mfe.d.ts
 declare module "mfe1/App" {
   import { ComponentType } from "react";
   const mfe1_App: ComponentType;

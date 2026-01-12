@@ -1,4 +1,3 @@
 packages:
-  - apps/*
-  - apps/mfe_apps/*
-  - packages/*
+  - "apps/**"
+  - "packages/**"
