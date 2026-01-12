@@ -13,6 +13,10 @@ export default defineConfig(({ mode }) => {
   // console.log("Loaded env variables:", env);
 
   return {
+    build: {
+      minify: false,
+      sourcemap: true,
+    },
     preview: {
       port: 5173,
       strictPort: true,
