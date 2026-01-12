@@ -24,8 +24,8 @@ Thumbs.db
 .env.test.local
 .env.production.local
 
-# Turbo cache
-.turbo/cache/
+# turbo temp files
+.turbo/
 
 # Log files
 npm-debug.log*
