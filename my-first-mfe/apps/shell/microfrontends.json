@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/microfrontends.json",
+  "applications": {
+    "my-first-mfe-app": {
+      "development": {
+        "fallback": "my-first-mfe-app.vercel.app"
+      }
+    },
+    "my-first-mfe-app-mfe1": {
+      "routing": [
+        {
+          "paths": ["/mfe1/*"]
+        }
+      ]
+    }
+  }
+}

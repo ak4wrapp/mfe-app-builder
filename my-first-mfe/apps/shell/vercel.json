@@ -1,10 +1,8 @@
 {
   "rewrites": [
-    { "source": "/mfe1/:path*", "destination": "/apps/mfe-apps/mfe1/dist/:path*" },
-    { "source": "/mfe2/:path*", "destination": "/apps/mfe-apps/mfe2/dist/:path*" },
-    { "source": "/mfe1", "destination": "/apps/mfe-apps/mfe1/dist/index.html" },
-    { "source": "/mfe2", "destination": "/apps/mfe-apps/mfe2/dist/index.html" },
-    { "source": "/(.*)", "destination": "/apps/shell/dist/$1" },
-    { "source": "/", "destination": "/apps/shell/dist/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
