@@ -1,5 +1,5 @@
 {
-  "name": "shell",
+  "name": "shell_old",
   "private": true,
   "scripts": {
     "dev": "vite",

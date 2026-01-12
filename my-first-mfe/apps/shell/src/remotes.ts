@@ -1,11 +1,11 @@
 export default function getRemotes(env: Record<string, string>) {
-  const mfe_ak: string = env.VITE_mfe_ak_REMOTE_URL;
-  const mfe_rk: string = env.VITE_mfe_rk_REMOTE_URL;
+  const mfe1: string = env.VITE_MFE1_URL;
+  const mfe2: string = env.VITE_MFE2_URL;
 
-  console.log("Configured Remotes - mfe_ak:", mfe_ak);
-  console.log("Configured Remotes - mfe_rk:", mfe_rk);
+  console.log("Configured Remotes - mfe1:", mfe1);
+  console.log("Configured Remotes - mfe2:", mfe2);
   return {
-    mfe_ak: mfe_ak,
-    mfe_rk: mfe_rk,
+    mfe1: mfe1,
+    mfe2: mfe2,
   };
 }

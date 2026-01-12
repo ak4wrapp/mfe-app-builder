@@ -250,6 +250,12 @@ VITE_MFE1_URL=http://localhost:5001/mfe1/assets/remoteEntry.js
 VITE_MFE2_URL=http://localhost:5002/mfe2/assets/remoteEntry.js
 EOF
 
+# Development URLs (subfolder)
+cat <<EOF > apps/shell/.env.production
+VITE_MFE1_URL=http://dev.com/mfe1/assets/remoteEntry.js
+VITE_MFE2_URL=http://dev.com/mfe1/assets/remoteEntry.js
+EOF
+
 # Production URLs (subfolder)
 cat <<EOF > apps/shell/.env.production
 VITE_MFE1_URL=/mfe1/assets/remoteEntry.js
@@ -352,15 +358,8 @@ Thumbs.db
 *.njsproj
 *.sln
 
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
 # Turbo cache
-.turbo/cache/
+.turbo/
 
 # Log files
 npm-debug.log*
