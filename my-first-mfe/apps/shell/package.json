@@ -1,10 +1,11 @@
 {
   "name": "shell",
   "private": true,
-  "scripts": { 
+  "scripts": {
     "dev": "vite",
     "local:preview": "vite --mode localpreview",
-    "build": "vite build"
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.0.0",

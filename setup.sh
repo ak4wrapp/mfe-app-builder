@@ -466,13 +466,25 @@ EOF
 # ---------------------------------------------------
 
 cat <<EOF > apps/shell/index.html
-<!DOCTYPE html><html><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shell</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
 EOF
 
 cat <<EOF > apps/shell/src/main.tsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
+
 ReactDOM.createRoot(document.getElementById('root')!).render(<App />)
 EOF
 
