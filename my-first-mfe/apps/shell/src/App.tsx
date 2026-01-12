@@ -2,6 +2,9 @@ import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { SharedButton } from "@repo/ui";
 
+const Mfe1 = lazy(() => import("mfe1/App"));
+const Mfe2 = lazy(() => import("mfe2/App"));
+
 export default () => (
   <BrowserRouter>
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
@@ -41,6 +44,22 @@ export default () => (
                 <h2>Welcome to the Shell</h2>
                 <p>Select an MFE above to load it at runtime.</p>
               </div>
+            }
+          />
+          <Route
+            path="/mfe1"
+            element={
+              <Suspense fallback="Loading MFE1...">
+                <Mfe1 />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/mfe2"
+            element={
+              <Suspense fallback="Loading MFE2...">
+                <Mfe2 />
+              </Suspense>
             }
           />
         </Routes>
