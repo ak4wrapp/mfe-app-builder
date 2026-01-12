@@ -669,6 +669,9 @@ cat <<EOF
 
 ✅  Hardened Setup Complete!
 ───────────────────────────
+🧩  Environment Configuration:
+   • Update .env.* files in $APP_NAME -> shell
+   • Update MFE Urls where you are planning to deploy MFEs
 
 🐳  AWS Deployment:
    Run: docker build -t mfe-app .
