@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+
 APP_NAME="${1:-my-mfe-app}"
 echo "🚀 Creating project $APP_NAME..."
 mkdir -p $APP_NAME && cd $APP_NAME
@@ -37,7 +38,7 @@ EOF
 cat <<EOF > turbo.json
 {
   "\$schema": "https://turbo.build/schema.json",
-"tasks": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
@@ -276,6 +277,7 @@ export default defineConfig(({ mode }) => {
     ]
   }
 })
+
 EOF
 
 cat <<EOF > apps/shell/src/App.tsx
@@ -316,11 +318,44 @@ echo "/// <reference types=\"vite/client\" />\ndeclare module 'mfe1/App';\ndecla
 # ---------------------------------------------------
 
 cat <<EOF > .gitignore
-node_modules
-dist
+# Node dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# OS files
 .DS_Store
-.vscode
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Environment files
+.env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Turbo cache
+.turbo/cache/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Optional: coverage reports
+coverage/
+
 EOF
 
 # ---------------------------------------------------
@@ -458,40 +493,12 @@ cat <<EOF > vercel.json
 }
 EOF
 
-Bash
-#!/bin/bash
-set -e
-
-APP_NAME="${1:-my-mfe-app}"
-echo "🚀 Creating hardened project $APP_NAME..."
-mkdir -p $APP_NAME && cd $APP_NAME
-
-# [Section 1 - 9 from your debugged script go here]
-# ... (All your working Turbo, Vite, and MFE creation logic) ...
-
-# ---------------------------------------------------
-# 10. Vercel Configuration (POC Hardened)
-# ---------------------------------------------------
-cat <<EOF > vercel.json
-{
-  "rewrites": [
-    { "source": "/mfe1/:path*", "destination": "/apps/mfe-apps/mfe1/dist/:path*" },
-    { "source": "/mfe2/:path*", "destination": "/apps/mfe-apps/mfe2/dist/:path*" },
-    { "source": "/mfe1", "destination": "/apps/mfe-apps/mfe1/dist/index.html" },
-    { "source": "/mfe2", "destination": "/apps/mfe-apps/mfe2/dist/index.html" },
-    { "source": "/(.*)", "destination": "/apps/shell/dist/\$1" },
-    { "source": "/", "destination": "/apps/shell/dist/index.html" }
-  ]
-}
-EOF
-
 # ---------------------------------------------------
 # 10. Docker & Nginx (AWS / Bamboo / JFrog)
 # ---------------------------------------------------
 
 # Create a separate folder for deployment artifacts
 mkdir -p deployment
-
 cat <<EOF > deployment/nginx.conf
 server {
     listen 80;
@@ -520,7 +527,7 @@ server {
 EOF
 
 cat <<EOF > Dockerfile
-# Stage 1: Build all apps
+# Stage 1: Build
 FROM node:20-alpine AS builder
 RUN npm install -g pnpm@10.28.0
 WORKDIR /app
@@ -528,7 +535,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 RUN pnpm build
 
-# Stage 2: Serve via Nginx
+# Stage 2: Serve
 FROM nginx:stable-alpine
 # Copy Shell
 COPY --from=builder /app/apps/shell/dist /usr/share/nginx/html/shell
@@ -555,7 +562,7 @@ echo "☁️ For Vercel: Just push to GitHub; vercel.json will handle the rest."
 # 12. Install dependencies
 # ---------------------------------------------------
 
-pnpm install
 echo "✅ Setup complete!"
 echo "🚀 To start your app preview, run:"
 echo "cd $APP_NAME && pnpm run local:preview"
+
