@@ -198,7 +198,7 @@ EOF
   # ----------------------------
   # vite-env.d.ts
   # ----------------------------
-  cat <<EOF > apps/mfe-apps/$NAME/vite-env.d.ts
+cat <<EOF > apps/mfe-apps/$NAME/vite-env.d.ts
 /// <reference types="vite/client" />
 EOF
 
@@ -311,8 +311,23 @@ export default () => (
 )
 EOF
 
-echo "/// <reference types=\"vite/client\" />\ndeclare module 'mfe1/App';\ndeclare module 'mfe2/App';" > apps/shell/src/vite-env.d.ts
+cat <<EOF > apps/shell/src/vite-env.d.ts
+/// <reference types="vite/client" />
+EOF
 
+cat <<EOF > apps/shell/src/mfe.d.ts
+declare module "mfe1/App" {
+  import { ComponentType } from "react";
+  const mfe1: ComponentType;
+  export default mfe1;
+}
+
+declare module "mfe2/App" {
+  import { ComponentType } from "react";
+  const mfe2: ComponentType;
+  export default mfe2;
+}
+EOF
 # ---------------------------------------------------
 # 5. .gitignore
 # ---------------------------------------------------
